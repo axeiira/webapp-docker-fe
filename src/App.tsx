@@ -1,10 +1,10 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
-import './App.css'
+import './App.css';
 
 function App() {
   const [task, setTask] = useState<string>('');
-  const [submittedTasks, setSubmittedTasks] = useState<string[]>([]); // State to store submitted tasks
+  const [submittedTasks, setSubmittedTasks] = useState<{ id: number, task: string }[]>([]); // State to store submitted tasks
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTask(e.target.value); // Update the task state when the input changes
@@ -12,7 +12,7 @@ function App() {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/tasks'); // Get tasks from the backend
+      const response = await axios.get('http://localhost:3001/tasks'); // Get tasks from the backend
       setSubmittedTasks(response.data); // Update state with fetched tasks
     } catch (err) {
       console.error('Error fetching tasks:', err);
@@ -23,7 +23,7 @@ function App() {
     e.preventDefault(); // Prevent the default form submission
     if (task) {
       try {
-        await axios.post('http://localhost:5000/tasks', { task }); // Send task to the backend
+        await axios.post('http://localhost:3001/tasks', { task }); // Send task to the backend
         setTask(''); // Clear the input field
         fetchTasks(); // Refresh the task list after submission
       } catch (err) {
@@ -49,10 +49,10 @@ function App() {
       <div>
         <h2>Submitted Tasks</h2>
         <ul>
-          {submittedTasks.map((submittedTask, index) => (
-            <li key={index}>{submittedTask}</li>
-          ))}
-        </ul>
+        {submittedTasks.map((submittedTask, index) => (
+          <li key={submittedTask.id}>{submittedTask.task}</li> // Access the 'task' property from each object
+        ))}
+      </ul>
       </div>
     </>
 
